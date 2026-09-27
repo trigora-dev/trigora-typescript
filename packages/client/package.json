@@ -1,6 +1,6 @@
 {
   "name": "@trigora/client",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "Client for starting and controlling Trigora durable executions.",
   "repository": {
     "type": "git",
@@ -43,7 +43,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@trigora/contracts": "0.9.0"
+    "@trigora/contracts": "1.0.0"
   },
   "devDependencies": {
     "tsup": "^8.5.1"

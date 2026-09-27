@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: trigora-typescript-0.9.0
+          name: trigora-typescript-1.0.0
           path: dist
       - uses: actions/setup-node@v4
         with:
