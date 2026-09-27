@@ -1,0 +1,34 @@
+name: release
+
+on:
+  push:
+    tags: ["v1.0.0"]
+
+jobs:
+  package:
+    uses: ./.github/workflows/package.yml
+
+  publish:
+    needs: package
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: trigora-typescript-0.9.0
+          path: dist
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - name: Publish packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          test -n "$NODE_AUTH_TOKEN"
+          npm publish dist/trigora-sdk-*.tgz
+          npm publish dist/trigora-client-*.tgz
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
