@@ -43,7 +43,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@trigora/contracts": "link:../../../trigora/packages/contracts"
+    "@trigora/contracts": "0.9.0"
   },
   "devDependencies": {
     "tsup": "^8.5.1"
