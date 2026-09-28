@@ -14,17 +14,34 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: trigora-dev/trigora
-          path: ../trigora
+          path: trigora
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - uses: pnpm/action-setup@v4
         with:
           version: 10.33.0
-      - run: pnpm install
-      - name: Pack contracts
-        working-directory: ../trigora/packages/contracts
+      - name: Point this job at the in-workspace contracts checkout
         run: |
+          node --input-type=module <<'EOF'
+          import fs from 'node:fs';
+          const path = 'package.json';
+          const before = fs.readFileSync(path, 'utf8');
+          const after = before.replace(
+            '"@trigora/contracts": "link:../trigora/packages/contracts"',
+            '"@trigora/contracts": "link:./trigora/packages/contracts"',
+          );
+          if (after === before) {
+            console.error('the contracts override was not updated for this job');
+            process.exit(1);
+          }
+          fs.writeFileSync(path, after);
+          EOF
+      - run: pnpm install --no-frozen-lockfile
+      - name: Pack contracts
+        working-directory: trigora/packages/contracts
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/dist"
           npm install
           npm run build
           npm pack --pack-destination "$GITHUB_WORKSPACE/dist"
