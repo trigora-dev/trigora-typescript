@@ -12,6 +12,9 @@ jobs:
     needs: package
     runs-on: ubuntu-latest
     environment: release
+    permissions:
+      id-token: write
+      contents: write
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -19,14 +22,15 @@ jobs:
           path: dist
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           registry-url: https://registry.npmjs.org
-      - name: Publish packages
+      - name: Publish the SDK
+        run: npm publish dist/trigora-sdk-*.tgz
+      - name: Publish the client
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           test -n "$NODE_AUTH_TOKEN"
-          npm publish dist/trigora-sdk-*.tgz
           npm publish dist/trigora-client-*.tgz
       - name: GitHub Release
         uses: softprops/action-gh-release@v2
