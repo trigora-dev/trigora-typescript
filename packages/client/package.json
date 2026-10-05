@@ -1,7 +1,7 @@
 {
   "name": "@trigora/client",
   "version": "1.0.0",
-  "description": "Client for starting and controlling Trigora durable executions.",
+  "description": "TypeScript client for starting and controlling Trigora durable executions.",
   "repository": {
     "type": "git",
     "url": "https://github.com/trigora-dev/trigora-typescript"

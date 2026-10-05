@@ -30,6 +30,7 @@ export const DEFAULT_CLOUD_API_URL = 'https://api.trigora.dev';
 
 export type CreateClientOptions = {
   url?: string;
+  remote?: boolean;
   token?: string;
   projectId?: string;
   fetch?: typeof fetch;
@@ -83,17 +84,48 @@ export type TrigoraClient = {
 const RESULT_POLL_INTERVAL_MS = 50;
 const PROJECT_HEADER = 'X-Trigora-Project-Id';
 
-function resolveBaseUrl(options: CreateClientOptions): string {
+type ResolvedTarget = {
+  url: string;
+  token?: string;
+  cloud: boolean;
+};
+
+function present(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
+}
+
+function envUrl(name: string, fallback: string): string {
+  return (present(process.env[name]) ?? fallback).replace(/\/$/, '');
+}
+
+function resolveTarget(options: CreateClientOptions): ResolvedTarget {
+  const explicitToken = present(options.token);
   if (options.url) {
-    return options.url.replace(/\/$/, '');
+    return {
+      url: options.url.replace(/\/$/, ''),
+      token: explicitToken,
+      cloud: false,
+    };
   }
 
-  const token = options.token ?? process.env.TRIGORA_TOKEN?.trim();
-  if (token) {
-    return (process.env.TRIGORA_API_BASE_URL ?? DEFAULT_CLOUD_API_URL).replace(/\/$/, '');
+  if (options.remote) {
+    const token = explicitToken ?? present(process.env.TRIGORA_TOKEN);
+    if (!token) {
+      throw new TrigoraRuntimeError('TRIGORA_TOKEN is not set.', { status: 0 });
+    }
+    return {
+      url: envUrl('TRIGORA_API_BASE_URL', DEFAULT_CLOUD_API_URL),
+      token,
+      cloud: true,
+    };
   }
 
-  return (process.env.TRIGORA_RUNTIME_URL ?? DEFAULT_RUNTIME_URL).replace(/\/$/, '');
+  return {
+    url: envUrl('TRIGORA_RUNTIME_URL', DEFAULT_RUNTIME_URL),
+    token: explicitToken,
+    cloud: false,
+  };
 }
 
 function delay(ms: number): Promise<void> {
@@ -149,8 +181,7 @@ function query(pagination?: Pagination): string {
 }
 
 export function createClient(options: CreateClientOptions = {}): TrigoraClient {
-  const url = resolveBaseUrl(options);
-  const token = options.token ?? process.env.TRIGORA_TOKEN?.trim();
+  const { url, token, cloud } = resolveTarget(options);
   const projectId = options.projectId;
   const fetchImpl = options.fetch ?? fetch;
 
@@ -178,7 +209,7 @@ export function createClient(options: CreateClientOptions = {}): TrigoraClient {
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
       throw new TrigoraRuntimeError(
-        token
+        cloud
           ? `Could not reach Trigora Cloud at ${requestUrl}. ${reason}`
           : `Could not reach the local Trigora runtime at ${requestUrl}. Is \`trigora dev\` running? ${reason}`,
         { status: 0 },

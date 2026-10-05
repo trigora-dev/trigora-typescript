@@ -152,3 +152,84 @@ describe('createClient', () => {
     });
   });
 });
+
+describe('host selection', () => {
+  const env = {
+    TRIGORA_TOKEN: process.env.TRIGORA_TOKEN,
+    TRIGORA_RUNTIME_URL: process.env.TRIGORA_RUNTIME_URL,
+    TRIGORA_API_BASE_URL: process.env.TRIGORA_API_BASE_URL,
+  };
+
+  afterEach(() => {
+    for (const [key, value] of Object.entries(env)) {
+      if (value === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = value;
+      }
+    }
+  });
+
+  function captureRequest(): { url?: string; authorization?: string } {
+    const seen: { url?: string; authorization?: string } = {};
+    globalThis.fetch = vi.fn(async (input: string | URL, init?: RequestInit) => {
+      seen.url = String(input);
+      const headers = new Headers(init?.headers);
+      seen.authorization = headers.get('authorization') ?? undefined;
+      return jsonResponse(200, { executions: [] });
+    }) as typeof fetch;
+    return seen;
+  }
+
+  it('stays local and omits Authorization when TRIGORA_TOKEN is set', async () => {
+    process.env.TRIGORA_TOKEN = 'cloud-token';
+    delete process.env.TRIGORA_RUNTIME_URL;
+    const seen = captureRequest();
+
+    await createClient().executions();
+
+    expect(seen.url).toBe('http://127.0.0.1:3477/v1/executions');
+    expect(seen.authorization).toBeUndefined();
+  });
+
+  it('selects Cloud and sends the token when remote is set', async () => {
+    process.env.TRIGORA_TOKEN = 'cloud-token';
+    delete process.env.TRIGORA_API_BASE_URL;
+    const seen = captureRequest();
+
+    await createClient({ remote: true }).executions();
+
+    expect(seen.url).toBe('https://api.trigora.dev/v1/executions');
+    expect(seen.authorization).toBe('Bearer cloud-token');
+  });
+
+  it('fails at construction when Cloud has no token', () => {
+    delete process.env.TRIGORA_TOKEN;
+
+    expect(() => createClient({ remote: true })).toThrow(/TRIGORA_TOKEN is not set/);
+  });
+
+  it('uses an explicit URL when remote is set and no token is present', async () => {
+    delete process.env.TRIGORA_TOKEN;
+    const seen = captureRequest();
+
+    await createClient({ url: 'http://127.0.0.1:9', remote: true }).executions();
+
+    expect(seen.url).toBe('http://127.0.0.1:9/v1/executions');
+    expect(seen.authorization).toBeUndefined();
+  });
+
+  it('sends an explicit token to a custom local URL', async () => {
+    process.env.TRIGORA_TOKEN = 'env-token';
+    const seen = captureRequest();
+
+    await createClient({
+      url: 'http://127.0.0.1:9',
+      token: 'explicit-token',
+      remote: false,
+    }).executions();
+
+    expect(seen.url).toBe('http://127.0.0.1:9/v1/executions');
+    expect(seen.authorization).toBe('Bearer explicit-token');
+  });
+});
