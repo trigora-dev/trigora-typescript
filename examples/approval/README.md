@@ -12,7 +12,7 @@ export default async function approval() {
 }
 ```
 
-This example stays inside `ts.subset.v1` and does not take a parameter. The subset also allows one plain parameter. It does not use `Promise.all` or an unnamed `effect(fn)`.
+This example stays inside `ts.subset.v1` and does not take a parameter. Parameters may be plain identifiers, including a call-time default that uses an earlier parameter. It does not use `Promise.all` or an unnamed `effect(fn)`.
 
 ## Run locally
 

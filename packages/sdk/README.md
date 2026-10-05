@@ -1,30 +1,38 @@
 # @trigora/sdk
 
-Authoring primitives for Trigora durable programs.
+TypeScript authoring SDK for Trigora durable programs.
 
-Write an ordinary default-exported async program entry. Make durable operations explicit. `trigora dev` compiles the supported subset and runs it on the local TCC engine.
-
-```ts
-import { effect, waitForEvent } from '@trigora/sdk';
-
-export default async function approval() {
-  const result = await effect('generate', () => 42);
-  const review = await waitForEvent('approved');
-  return { result, review };
-}
-```
-
-There is no `defineFlow()` and no mandatory `ctx`. The local compiler supports `ts.subset.v1`: a default-exported async program entry with no parameters, or one plain parameter (`approval(input)`). An anonymous `export default async function ()` is valid; the artifact names that entry `"default"`. Not a second parameter, a default, a rest parameter, or a binding pattern. Effect keys and event names are string literals.
+Build long-running programs that can call external systems, wait for events, sleep durably, invoke child executions, and recover from committed continuation state.
 
 ## Install
 
 ```bash
-npm install @trigora/sdk trigora @trigora/client
+npm install @trigora/sdk
+```
+
+## Quick example
+
+```ts
+import { effect, waitForEvent } from '@trigora/sdk';
+
+export default async function approval(input) {
+  const result = await effect('generate', () => 42);
+  const review = await waitForEvent('approved');
+
+  return { result, review };
+}
+```
+
+Run it locally with:
+
+```bash
+trigora dev
+trigora start approval --input '{"request":"example"}'
 ```
 
 ## Program entry
 
-Discover programs from `trigora.toml`:
+Trigora discovers programs from the paths configured in `trigora.toml`:
 
 ```toml
 [project]
@@ -32,35 +40,75 @@ name = "my-project"
 programs = ["src/**/*.ts"]
 ```
 
-Each matching file default-exports one async program entry. A named entry's function name is the program id. An anonymous default export uses the file name.
+Each matching file default-exports one async program entry.
 
-Triggers are configured in `trigora.toml` and deployed with the Trigora CLI. They are not SDK or client APIs.
-
-## Primitives
-
-- `effect(name, fn)` — durable side effect; `name` is required
-- `sleep(ms)` — timer suspension
-- `waitForEvent('approved')` — wait for an event
-- `invoke('analyze', input)` — child execution. `input` is optional.
-- `execution.id` / `execution.attempt` / `execution.signal` — current execution metadata
-
-`event()` helpers exist for typed clients but are not required. Directly executing a program file will throw; start it with `@trigora/client` while `trigora dev` is running.
-
-## Local preview
-
-```bash
-npx trigora init
-npx trigora dev
-trigora start approval
-trigora send <id> approved --payload '"ok"'
+```ts
+export default async function research(topic, depth = topic) {
+  // ...
+}
 ```
 
-See [`examples/approval`](../../examples/approval).
+The TypeScript frontend implements `ts.subset.v1`.
 
-Webhook signature helpers remain available at `@trigora/sdk/stripe` and `@trigora/sdk/github`.
+Program parameters may be plain identifiers. Defaults may reference earlier parameters only. Missing arguments remain `undefined` unless a supported default applies, and extra arguments are ignored.
 
-This package is MIT. The CLI may depend on separate `@tcc-engine/*` packages; those are not part of this SDK.
+Rest parameters and optional `?` parameters are not supported.
+
+An anonymous default export is also valid:
+
+```ts
+export default async function () {
+  // ...
+}
+```
+
+Its artifact entry name is `"default"`.
+
+## Durable primitives
+
+- `effect(name, fn)` — run a durable external effect
+- `sleep(ms)` — suspend on a durable timer
+- `waitForEvent(name)` — wait for an external event
+- `invoke(program, input)` — invoke a durable child execution
+- `execution.id` — current execution id
+- `execution.attempt` — current attempt
+- `execution.signal` — execution cancellation signal
+
+Effect keys and event names are string literals in the current TypeScript subset.
+
+## Local development
+
+```bash
+trigora init
+trigora dev
+trigora start approval
+trigora send <execution> approved --payload '"ok"'
+trigora result <execution>
+```
+
+Programs execute through the Trigora runtime rather than by running the source file directly.
+
+## Typed events
+
+`event()` can be used to define typed events shared between program and client code.
+
+## Integrations
+
+Webhook signature helpers are available at:
+
+```ts
+@trigora/sdk/stripe
+@trigora/sdk/github
+```
+
+These are optional TypeScript convenience utilities.
+
+## Learn more
+
+- [Quickstart](https://trigora.dev/docs/quickstart)
+- [Trigora documentation](https://trigora.dev/docs)
+- [TCC TypeScript semantics](https://github.com/trigora-dev/tcc-engine/blob/main/spec/typescript-subset.md)
 
 ## License
 
-MIT
+MIT © 2026 Trigora, Inc.

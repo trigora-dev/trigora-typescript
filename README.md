@@ -71,26 +71,6 @@ The TypeScript client for Trigora Cloud.
 
 Use it to work with projects, programs, executions, events, results, and other Cloud APIs.
 
-## How it fits together
-
-```text
-TypeScript source
-      │
-      ▼
- @trigora/sdk
-      │
-      ▼
-TCC TypeScript frontend
-      │
-      ▼
-  TCC artifact
-      │
-      ▼
-Trigora runtime
-```
-
-The same TCC execution model is also available for Python and Rust.
-
 ## Ecosystem
 
 - [Trigora](https://github.com/trigora-dev/trigora) — CLI, local runtime, contracts, and ecosystem overview

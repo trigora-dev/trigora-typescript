@@ -1,6 +1,7 @@
 {
   "name": "@trigora/sdk",
   "version": "1.0.0",
+  "description": "TypeScript authoring SDK for Trigora durable programs.",
   "repository": {
     "type": "git",
     "url": "https://github.com/trigora-dev/trigora-typescript"
