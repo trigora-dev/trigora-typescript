@@ -9,40 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/checkout@v5
-        with:
-          repository: trigora-dev/trigora
-          path: trigora
       - uses: pnpm/action-setup@v5
         with:
           version: 10.33.0
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Point this job at the in-workspace contracts checkout
-        run: |
-          node --input-type=module <<'EOF'
-          import fs from 'node:fs';
-          const path = 'package.json';
-          const before = fs.readFileSync(path, 'utf8');
-          const after = before.replace(
-            '"@trigora/contracts": "link:../trigora/packages/contracts"',
-            '"@trigora/contracts": "link:./trigora/packages/contracts"',
-          );
-          if (after === before) {
-            console.error('the contracts override was not updated for this job');
-            process.exit(1);
-          }
-          fs.writeFileSync(path, after);
-          EOF
+      - name: Use published packages instead of the sibling checkout
+        run: node --input-type=module .github/workflows/use-published-deps.mjs
       - run: pnpm install --no-frozen-lockfile
-      - name: Pack contracts
-        working-directory: trigora/packages/contracts
-        run: |
-          mkdir -p "$GITHUB_WORKSPACE/dist"
-          npm install
-          npm run build
-          npm pack --pack-destination "$GITHUB_WORKSPACE/dist"
+      - run: mkdir -p dist
       - run: pnpm --filter @trigora/sdk build
       - run: pnpm --filter @trigora/sdk exec npm pack --pack-destination "$GITHUB_WORKSPACE/dist"
       - run: pnpm --filter @trigora/client build
@@ -50,7 +26,6 @@ jobs:
       - name: Install the tarballs
         run: |
           mkdir -p /tmp/trigora-ts
-          npm install --prefix /tmp/trigora-ts "$GITHUB_WORKSPACE"/dist/trigora-contracts-1.0.0.tgz
           npm install --prefix /tmp/trigora-ts "$GITHUB_WORKSPACE"/dist/trigora-sdk-1.0.0.tgz
           npm install --prefix /tmp/trigora-ts "$GITHUB_WORKSPACE"/dist/trigora-client-1.0.0.tgz
           cd /tmp/trigora-ts
