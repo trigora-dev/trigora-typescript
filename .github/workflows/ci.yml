@@ -16,8 +16,6 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Use published packages instead of the sibling checkout
-        run: node --input-type=module .github/workflows/use-published-deps.mjs
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test

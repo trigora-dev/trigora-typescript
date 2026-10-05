@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@trigora/contracts': link:../trigora/packages/contracts
-
 importers:
 
   .:
@@ -43,8 +40,8 @@ importers:
         version: link:../../packages/sdk
     devDependencies:
       trigora:
-        specifier: link:../../../trigora/packages/cli
-        version: link:../../../trigora/packages/cli
+        specifier: 1.0.0
+        version: 1.0.0
       tsx:
         specifier: ^4.21.0
         version: 4.23.15
@@ -52,8 +49,8 @@ importers:
   packages/client:
     dependencies:
       '@trigora/contracts':
-        specifier: link:../../../trigora/packages/contracts
-        version: link:../../../trigora/packages/contracts
+        specifier: 1.0.0
+        version: 1.0.0
     devDependencies:
       tsup:
         specifier: ^8.5.1
@@ -62,8 +59,8 @@ importers:
   packages/sdk:
     dependencies:
       '@trigora/contracts':
-        specifier: link:../../../trigora/packages/contracts
-        version: link:../../../trigora/packages/contracts
+        specifier: 1.0.0
+        version: 1.0.0
     devDependencies:
       tsup:
         specifier: ^8.5.1
@@ -711,6 +708,13 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
+  '@tcc-engine/frontend-typescript@26.10.2':
+    resolution: {integrity: sha512-kpN+hhTBlTNyyuSDJRtw7eBrK/aU5fhrzK2RoL41FfmM/25RMyxBRxQEQTljR6m5PrPkagfosZVxevzD1CC5NQ==}
+    engines: {node: '>=22'}
+
+  '@trigora/contracts@1.0.0':
+    resolution: {integrity: sha512-0tb0E6Z7+SMp02sPvEvi3+DCtgUpcRYZvmJL+NI1/Ozb3EX14Uw6qteg8B/jQc4alKaUSPxS//BTW4KOsHBNpQ==}
+
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
 
@@ -899,6 +903,10 @@ packages:
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
+
+  dotenv@17.4.2:
+    resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
+    engines: {node: '>=12'}
 
   es-module-lexer@2.3.2:
     resolution: {integrity: sha512-poHGpORABojJJucnV9KbOavETW8lBVnphkW77ER5/BQ5Fz7oXSoCNek7IH3vR5nRjdsEz926ibFYX8KtLQmdyw==}
@@ -1290,6 +1298,10 @@ packages:
   siginfo@2.0.0:
     resolution: {integrity: sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==}
 
+  smol-toml@1.9.0:
+    resolution: {integrity: sha512-hpd+HLON7HdZXqYchMM/+LaTTbdK0AU3NngIJ4KVyWbY9bfQqdL9cD+4yf6dUoU2Ap4VsU0JkQi6FxAI1B2mXQ==}
+    engines: {node: '>= 18'}
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -1338,6 +1350,11 @@ packages:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
     hasBin: true
 
+  trigora@1.0.0:
+    resolution: {integrity: sha512-fzABvNX7eBVRLivQdhrw7hJFxHbtQ+oPBkAJUS4cG7RSllsHo2MeIHSnYZ5gkuYMbTcObWnTt5P8+C9LtAAIwQ==}
+    engines: {node: '>=22'}
+    hasBin: true
+
   ts-api-utils@2.5.0:
     resolution: {integrity: sha512-OJ/ibxhPlqrMM0UiNHJ/0CKQkoKF243/AEmplt3qpRgkW8VG7IfOS41h7V8TjITqdByHzrjcS/2si+y4lIh8NA==}
     engines: {node: '>=18.12'}
@@ -1374,6 +1391,11 @@ packages:
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
+
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
 
   typescript@6.0.3:
     resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
@@ -1858,6 +1880,12 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
+  '@tcc-engine/frontend-typescript@26.10.2':
+    dependencies:
+      typescript: 5.9.3
+
+  '@trigora/contracts@1.0.0': {}
+
   '@types/chai@5.2.3':
     dependencies:
       '@types/deep-eql': 4.0.2
@@ -2072,6 +2100,8 @@ snapshots:
   deep-is@0.1.4: {}
 
   detect-libc@2.1.2: {}
+
+  dotenv@17.4.2: {}
 
   es-module-lexer@2.3.2: {}
 
@@ -2497,6 +2527,8 @@ snapshots:
 
   siginfo@2.0.0: {}
 
+  smol-toml@1.9.0: {}
+
   source-map-js@1.2.1: {}
 
   source-map@0.7.6: {}
@@ -2537,6 +2569,16 @@ snapshots:
   tinyrainbow@3.1.1: {}
 
   tree-kill@1.2.2: {}
+
+  trigora@1.0.0:
+    dependencies:
+      '@tcc-engine/frontend-typescript': 26.10.2
+      '@trigora/contracts': 1.0.0
+      dotenv: 17.4.2
+      esbuild: 0.27.7
+      picocolors: 1.1.1
+      smol-toml: 1.9.0
+      typescript: 5.9.3
 
   ts-api-utils@2.5.0(typescript@6.0.3):
     dependencies:
@@ -2581,6 +2623,8 @@ snapshots:
   type-check@0.4.0:
     dependencies:
       prelude-ls: 1.2.1
+
+  typescript@5.9.3: {}
 
   typescript@6.0.3: {}
 

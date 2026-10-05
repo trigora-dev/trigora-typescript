@@ -15,9 +15,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Use published packages instead of the sibling checkout
-        run: node --input-type=module .github/workflows/use-published-deps.mjs
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - run: mkdir -p dist
       - run: pnpm --filter @trigora/sdk build
       - run: pnpm --filter @trigora/sdk exec npm pack --pack-destination "$GITHUB_WORKSPACE/dist"

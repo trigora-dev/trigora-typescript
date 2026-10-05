@@ -11,7 +11,7 @@
     "@trigora/sdk": "workspace:*"
   },
   "devDependencies": {
-    "trigora": "link:../../../trigora/packages/cli",
+    "trigora": "1.0.0",
     "tsx": "^4.21.0"
   }
 }
