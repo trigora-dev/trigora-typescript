@@ -112,6 +112,42 @@ describe('createClient', () => {
     await expect(run.result()).resolves.toEqual({ reviewer: 'Omar' });
   });
 
+  it('sends an empty argument list when input is omitted', async () => {
+    const fetchMock = vi.fn(async () =>
+      jsonResponse(200, {
+        execution: {
+          id: 'exec_empty',
+          programId: 'program',
+          status: 'completed',
+          input: [],
+          attempt: 1,
+          createdAt: '2026-08-31T00:00:00.000Z',
+          updatedAt: '2026-08-31T00:00:00.000Z',
+        },
+      }),
+    );
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    const client = createClient({ url: 'http://127.0.0.1:9' });
+    await client.start('program');
+    await client.start('program', {});
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      'http://127.0.0.1:9/v1/executions',
+      expect.objectContaining({
+        body: JSON.stringify({ programId: 'program', input: [] }),
+      }),
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      'http://127.0.0.1:9/v1/executions',
+      expect.objectContaining({
+        body: JSON.stringify({ programId: 'program', input: {} }),
+      }),
+    );
+  });
+
   it('surfaces runtime errors', async () => {
     globalThis.fetch = vi.fn(async () =>
       jsonResponse(404, {

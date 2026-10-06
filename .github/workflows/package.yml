@@ -25,10 +25,10 @@ jobs:
         run: |
           mkdir -p /tmp/trigora-ts
           npm install --prefix /tmp/trigora-ts "$GITHUB_WORKSPACE"/dist/trigora-sdk-1.0.0.tgz
-          npm install --prefix /tmp/trigora-ts "$GITHUB_WORKSPACE"/dist/trigora-client-1.0.0.tgz
+          npm install --prefix /tmp/trigora-ts "$GITHUB_WORKSPACE"/dist/trigora-client-1.0.1.tgz
           cd /tmp/trigora-ts
           node --input-type=module -e "import { effect } from '@trigora/sdk'; import { createClient } from '@trigora/client'; const client = createClient({ url: 'http://127.0.0.1:9' }); if (typeof effect !== 'function' || typeof client.start !== 'function') process.exit(1)"
       - uses: actions/upload-artifact@v6
         with:
-          name: trigora-typescript-1.0.0
+          name: trigora-typescript-1.0.1
           path: dist/*

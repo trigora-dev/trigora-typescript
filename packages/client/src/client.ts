@@ -68,7 +68,7 @@ export type TrigoraClient = {
   ): Promise<ListProgramVersionsResponse>;
   start<TInput, TResult>(
     program: DurableProgram<TInput, TResult> | string,
-    input: TInput,
+    input?: TInput,
   ): Promise<ExecutionHandle<TResult>>;
   startExecution(body: StartExecutionRequest): Promise<StartExecutionResponse>;
   get<TResult = unknown>(executionId: string): ExecutionHandle<TResult>;
@@ -312,7 +312,7 @@ export function createClient(options: CreateClientOptions = {}): TrigoraClient {
         method: 'POST',
         body: JSON.stringify({
           programId: resolveProgramId(program),
-          input,
+          input: input === undefined ? [] : input,
         }),
       });
       return new ExecutionHandleImpl(response.execution.id);

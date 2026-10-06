@@ -93,7 +93,7 @@ Programs:
 
 Executions:
 
-- `start(program, input)`
+- `start(program, input?)` — omitted input is `[]`; an explicit `{}` is one value
 - `listExecutions()`
 - `getExecution(id)`
 

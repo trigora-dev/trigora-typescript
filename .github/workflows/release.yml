@@ -2,7 +2,7 @@ name: release
 
 on:
   push:
-    tags: ["v1.0.0"]
+    tags: ["v1.0.1"]
 
 jobs:
   package:
@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v7
         with:
-          name: trigora-typescript-1.0.0
+          name: trigora-typescript-1.0.1
           path: dist
       - uses: actions/setup-node@v5
         with:
@@ -71,7 +71,7 @@ jobs:
             fi
             return "$status"
           }
-          publish dist/trigora-client-1.0.0.tgz
+          publish dist/trigora-client-1.0.1.tgz
       - name: GitHub Release
         uses: softprops/action-gh-release@v2
         with:
